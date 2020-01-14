@@ -1,4 +1,5 @@
 using BirdIsAWord.Data;
+using BirdIsAWord.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -24,6 +25,12 @@ namespace BirdIsAWord
         
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHealthChecks();
+            //appsettings
+            var appSettings = new AppSettings();
+            var appSettingsConfigSection = this.Configuration.GetSection("AppSettings");
+            appSettingsConfigSection.Bind(appSettings);
+            services.AddSingleton(appSettings);
             services.AddDbContext<GpsWebServiceDBEntities>(
             b => b.UseLazyLoadingProxies()
            .UseSqlServer(Configuration.GetConnectionString("GPSWebServiceData")));
@@ -44,8 +51,8 @@ namespace BirdIsAWord
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.AddScoped(typeof(IRepositoryAsync<>), typeof(EFRepository<>));
-            //services.AddScoped(typeof(EFRepository<>), typeof(IRepository<>));
+            services.AddBusinessServices();
+           
 
         }
 
@@ -73,7 +80,7 @@ namespace BirdIsAWord
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+           
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             if (!env.IsDevelopment())
@@ -104,4 +111,6 @@ namespace BirdIsAWord
             });
         }
     }
+
+   
 }
