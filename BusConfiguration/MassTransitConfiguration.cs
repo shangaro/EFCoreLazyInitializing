@@ -86,10 +86,13 @@ namespace BirdIsAWord.BusConfiguration
                 {
                     // command handlers
                     x.AddConsumer<ProximityConsumer>();
-                   
+
 
                     //// event handlers
                     //x.AddConsumer<ProximityConsumer>();
+
+                    // request client
+                    x.AddRequestClient<ProximityCommand>();
                     
                    
                 });
